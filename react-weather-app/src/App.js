@@ -3,10 +3,12 @@ import axios from "axios";
 import Title from "./components/Title";
 import Form from "./components/Form";
 import Results from "./components/Results";
+import Loading from "./components/Loading";
 
 import './App.css';
 
 function App() {
+  const [loading, setLoading] = useState(false);
   const [city, setCity] = useState("");
   const [results, setResults] = useState({
     country: "",
@@ -18,6 +20,7 @@ function App() {
 
   const getWeather = (e) => {
       e.preventDefault();
+      setLoading(true);
       axios.get(`https://api.weatherapi.com/v1/current.json?key=` + process.env.REACT_APP_WEATHER_API_KEY + `&q=${city}&aqi=no`)
       .then(res => {
         setResults({
@@ -28,6 +31,7 @@ function App() {
           icon: res.data.current.condition.icon
         })
         setCity("");
+        setLoading(false);
       })
       .catch(err => alert("エラーが発生しました。ページをリロードして、もう一度トライしてください。"));
   };
@@ -36,7 +40,8 @@ function App() {
       <div className="container">
         <Title />
         <Form setCity={setCity} getWeather={getWeather} city={city} />
-        <Results results={results} />
+        {/* <Results results={results} /> */}
+        {loading ? <Loading /> : <Results results={results} /> }
       </div>
     </div>
   );
